@@ -206,7 +206,7 @@ Is a form where the detailed information of the person selected on the table wil
 
 ##### Step 1a: Migrate first the table
 
-In this case the user decide to migrate first the top panel containing the table. Then we implement a Vaadin Grid ready to list IPerson data. 
+In this case the user decides to migrate first the top panel containing the table. Then we implement a Vaadin Grid ready to list IPerson data. 
 
 ```java
     public PersonsTableView() {
@@ -273,8 +273,71 @@ To finalize this migration now we need to create the JVaadinPanel that will show
 
 ##### Step 1b: Migrate first the detailed info panel
 
-Image
-form migrated
+In this case the user decides to migrate first the bottom panel containing the detailed information form. Then we implement a Vaadin FormLayout that contains all the required TextFields and a Binder for the IPerson data. 
+
+```java
+     public PersonView() {
+        binder = new Binder<>();
+
+        firstName = new TextField();
+        firstName.setSizeFull();
+        binder.forField(firstName).bind(IPerson::getFirstName, IPerson::setFirstName);
+        lastName = new TextField();
+        lastName.setSizeFull();
+        binder.forField(lastName).bind(IPerson::getLastName, IPerson::setLastName);
+        jobName = new TextField();
+        jobName.setSizeFull();
+        binder.forField(jobName).bind(IPerson::getJob, IPerson::setJob);
+        birth = new DatePicker();
+        birth.setSizeFull();
+        binder.forField(birth).bind(IPerson::getBirthDate, IPerson::setBirthDate);
+
+        addFormItem(firstName, "First Name");
+        addFormItem(lastName, "Last Name");
+        addFormItem(jobName, "Occupation");
+        addFormItem(birth, "Birthdate");
+    }
+```
+
+So far this is just a regular Vaadin view with a form than can already be displayed on a browser. 
+
+![Vaadin Form on the browser](https://user-images.githubusercontent.com/106953874/197409647-b9c8ac28-dfb6-4c95-80b5-d00dfcc2554e.png)
+
+Then to allow the view to be callable from the Swing side when a user of the table is selected we implement on the view the IPersonProvider interface. 
+
+```java
+ public class PersonView extends FormLayout implements IPersonProvider {
+....
+....
+
+    @Override
+    public void show(Long id) {
+        binder.setBean(PersonsData.getData().get(id));
+    }
+```
+
+To finalize this migration now we need to create the JVaadinPanel that will call the Vaadin view and then prepare the component to notify the selection item event on the Swing side. 
+
+```java 
+        JVaadinPanel personDetails = null;
+        try {
+            personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
+            personDetailsProvider = personDetails.as(IPersonProvider.class);
+        } catch (SwingVaadinException e) {
+            throw new RuntimeException(e);
+        }
+```
+```java 
+        tableView.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                Long selectedId = (long) ((ListSelectionModel)e.getSource()).getSelectedIndices()[0] + 1;
+                personDetailsProvider.show(selectedId);
+            }
+        });
+```
+
+![Detailed Info Form migrated](https://user-images.githubusercontent.com/106953874/197409849-550eafef-66c5-43b7-a0e8-38ac5d9b8c45.png)
+
 
 #### Step 2: Combine views
 
