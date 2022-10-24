@@ -79,7 +79,7 @@ After all views are migrated into Vaadin, the user can use the application with 
 
 ### Step-by-Step guide
 
-**QuickTips:**
+#### QuickTips:
 
 One of the advantages of the Vaadin Swing Kit is that the user can develop the view and test on a regular browser all functionalities except of course the ones that involves communications between Swing and Vaadin sides. So the user should start always implementing the Vaadin view that will replace the Swing JPanel. To ease the development the Swing Kit provides an API to detect if the view is been rendered on a regular browser or on a JVaadinPanel. This way the user can run the same code without having a version for regular browsers and another version for JVaadinPanel. 
 
