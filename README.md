@@ -31,6 +31,7 @@ cd swing-app/target
 - Table migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinTable
 - Detailed info form migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinDetails
 - Full app migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFullVaadin
+- All Previous examples launched at a time: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.AllFramesMain
 
 # For MacOS and Java >= 17 add these parameters to the command (if you get exception related to sun.awt package)
 java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
