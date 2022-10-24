@@ -341,5 +341,80 @@ To finalize this migration now we need to create the JVaadinPanel that will call
 
 #### Step 2: Combine views
 
-Image 
-Both migrated
+No matter what view we have migrated first now we have to combine both solutions. The only difference with the previous step would be that communication now is from JVaadinPanel to JVaadinPanel. In our demo the event lifecycle is that the selection of an item on the table produces an event that is propagated to the detailed info form. As we have shown on step 1, this means to listen the VaadinSwingEvent on the table view and then call the IPersonProvider interface on the form view. 
+
+```java
+ JVaadinPanel tableView = null;
+        try {
+            tableView = SwingVaadinClient.getBuilder().build("http://localhost:8080/person-table-view");
+            tableView.setPreferredSize(new Dimension(400, 50));
+            tableView.addEventListener(PERSON_SHOW_EVENT, new VaadinEventListener() {
+                @Override
+                public void handleEvent(VaadinSwingEvent vaadinSwingEvent) {
+					if (vaadinSwingEvent.getType().equals(PERSON_SHOW_EVENT)) {
+						Long selectedId = (Long) vaadinSwingEvent.getParams().get(PERSON_PARAMETER);
+						personDetailsProvider.show(selectedId);
+					}
+                }
+            });
+        } catch (SwingVaadinException e) {
+            throw new RuntimeException(e);
+        }
+
+        ...
+        ...
+
+        JVaadinPanel personDetails = null;
+        try {
+            personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
+            personDetailsProvider = personDetails.as(IPersonProvider.class);
+        } catch (SwingVaadinException e) {
+            throw new RuntimeException(e);
+        }
+
+```
+
+![Application Migrated Swing UI](https://user-images.githubusercontent.com/106953874/197489201-91e41313-4744-446c-b4d9-f6b38bae102f.png)
+
+
+#### Step 3: Goodbye Swing
+
+At this point we have migrated all the views of our Swing application. Now we will just need to create a Vaadin View that host both subviews and with the flexibility of Vaadin this a quick easy action. Again the only change to implement is to change the communication between Vaadin views now to a native Vaadin listener as there is no Swing components involved. 
+
+**Main View:**
+
+```java 
+public class PersonFullView extends VerticalLayout {
+    public PersonFullView() {
+        setAlignItems(Alignment.CENTER);
+        H2 title = new H2("Person Example Application");
+        add(title);
+        PersonsTableView table = new PersonsTableView();
+        add(table);
+        PersonView person = new PersonView();
+        add(person);
+        table.attachToDetails(person);
+    }
+}
+
+```
+
+**Table view:**
+
+```java 
+ public void attachToDetails(PersonView view) {
+        grid.addSelectionListener(selection -> {
+            if (selection.getFirstSelectedItem().isPresent()) {
+                Long id = PersonsData.getData().inverse().get(selection.getFirstSelectedItem().get());
+                System.out.println("ID "+id+" "+selection.getFirstSelectedItem());
+                if (id != null) {
+                    view.show(id);
+                }
+            }
+        });
+    }
+```    
+
+![Final Vaadin Application](https://user-images.githubusercontent.com/106953874/197497011-6afe668b-ea2e-42e7-9d32-c9f288771e1b.png)
+
+On our demo application this will be the final step and the goodbye to Swing, of course if there were more views to migrate the user could still integrate this Vaadin view containing both table and form into a JVaadinPanel so the complete view is rendered on a Swing application. 
