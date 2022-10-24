@@ -125,14 +125,6 @@ public interface IPerson extends Serializable {
 }
 ```
 
-**IPersonView:** The IPersonView interface represents a visual element that visualize the detailed information of a person.
-
-```java
-public interface IPersonView {
-    void show(Long id);
-}
-```
-
 #### Step 0: The Swing app
 
 For this demo we have a Swing application with a main JFrame containing two panels. The top panel contains a table with a list of people and the bottom panel contains a form where after clicking on any item of the table, detailed information of the person is displayed. 
