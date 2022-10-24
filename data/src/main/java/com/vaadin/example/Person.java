@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Calendar;
 
+/**
+ * Implementation of the entity that will be shared between views of the application.
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public class Person implements IPerson, Serializable {
 
     public static Person createDefault() {

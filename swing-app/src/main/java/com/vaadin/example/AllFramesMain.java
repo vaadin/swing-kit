@@ -2,6 +2,12 @@ package com.vaadin.example;
 
 import javax.swing.*;
 
+/**
+ * Helper to run all the step by step guide applications
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public class AllFramesMain {
     public static void main(String[] a) {
         PersonListFrame frameSwing = new PersonListFrame();

@@ -7,6 +7,12 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Mock data service for the demo providing a Person simulated database.
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public class PersonsData {
     static {
         BiMap<Long,IPerson> investigators = HashBiMap.create();

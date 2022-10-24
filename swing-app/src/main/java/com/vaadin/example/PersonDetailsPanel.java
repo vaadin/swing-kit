@@ -1,17 +1,31 @@
 package com.vaadin.example;
 
-import com.vaadin.example.views.IPersonView;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.TextField;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
-public class PersonDetailsPanel extends JPanel implements IPersonView {
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+/**
+ * Swing JPanel to show the detailed information of a Person when it is selected
+ * on the table component. It is a form with some text fields and labels.
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
+public class PersonDetailsPanel extends JPanel {
     private TextField txtFirstName, txtLastName, txtJob;
 
     private UtilDateModel birthDateModel;
@@ -71,7 +85,11 @@ public class PersonDetailsPanel extends JPanel implements IPersonView {
         return gbc;
     }
 
-    @Override
+    /**
+     * Shows the information of the selected person on the form. 
+     * 
+     * @param id Unique identifier of the Person
+     */
     public void show(Long id) {
         IPerson person = PersonsData.getData().get(id);
         txtFirstName.setText(person.getFirstName());

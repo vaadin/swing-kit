@@ -4,6 +4,12 @@ package com.vaadin.example;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * The Entity Person used in this demo with its personal information
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public interface IPerson extends Serializable {
     void setFirstName(String firstName);
 
