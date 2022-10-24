@@ -1,5 +1,7 @@
 # Swing Kit Example
 
+This demo contains a full example of a phased migration of a simple Swing App to Vaadin 23 using the Swing Kit as a migration helper. 
+
 First compile the modules with
 ```
 mvn clean install
@@ -7,23 +9,33 @@ mvn clean install
 
 ## Run the project
 
-This project includes two applications.
+This project includes two applications. A valid **Vaadin PRO license is required** to run this Swing Kit demo.
 
 On one terminal, run Vaadin application:
 ```
 cd flow-server
 mvn
 ```
-You can check the person page at `http://localhost:8080/person`
+You can check the different pieces of this demo.
+
+- Table View migration page at `http://localhost:8080/person-table-view`
+- Detailed Info migration page at `http://localhost:8080/person`
+- Final migration page at `http://localhost:8080/`
 
 On a second terminal, run Swing application:
 ```
 cd swing-app/target
 
-# Windows
-java -jar swing-app-1.0-SNAPSHOT.jar
-# For MacOs
-java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -jar swing-app-1.0-SNAPSHOT.jar
+# Windows and MacOs
+- Original Swing App: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
+- Table migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinTable
+- Detailed info form migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinDetails
+- Full app migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFullVaadin
+- All Previous examples launched at a time: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.AllFramesMain
+
+# For MacOS and Java >= 17 add these parameters to the command (if you get exception related to sun.awt package)
+java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
+
 ```
 ## Development
 
@@ -37,20 +49,16 @@ This will include a 3 multimodule project.
 
 ### Goal: Automating the Swing-to-Vaadin journey
 
-The purpose of the Swing Kit is to reduce risks and time required in a big-bang migration from Swing to Vaadin, giving the option of a phased process.
+The purpose of the Swing Kit is to reduce risks and time required in a big-bang migration from Swing to Vaadin, giving the option of a phased process. In this guide we will show the process of migrating one view at the time, and render them inside your Swing Application.
 
-Migrate one view at the time, and render them inside your Swing Application.
-
-Swing Kit contains an embedded browser with additional Vaadin-integration features.
-Render Vaadin views inside Swing Panels.
-Events and Calls can be shared between the different view technologies.
+Swing Kit contains an embedded browser with additional Vaadin-integration features. It allows to render Vaadin views inside Swing Panels and helps to manage Events and Calls that can be shared between the different view technologies.
 
 #### Basic Concepts
 
 - **JVaadinPanel:** The extension of a Swing JPanel to be used in Swing applications that contains an embedded browser where Vaadin views will be displayed.  
 - **SwingVaadinCallable:** The interface that makes a Vaadin view callable from the JVaadinPanel, that is from the Swing side.
 - **VaadinSwingEvent:** The Event class that allows the user to send asynchronous events from the Vaadin view to the Swing side. 
-- **Phased Migration:** The Swing Kit migrations approach let the user to migrate a Swing application view by view. 
+- **Phased Migration:** The Swing Kit migrations approach lets the user to migrate a Swing application view by view. 
 
 **Initial State**
 
@@ -72,7 +80,7 @@ After all views are migrated into Vaadin, the user can use the application with 
 
 ### Step-by-Step guide
 
-**QuickTips:**
+#### QuickTips:
 
 One of the advantages of the Vaadin Swing Kit is that the user can develop the view and test on a regular browser all functionalities except of course the ones that involves communications between Swing and Vaadin sides. So the user should start always implementing the Vaadin view that will replace the Swing JPanel. To ease the development the Swing Kit provides an API to detect if the view is been rendered on a regular browser or on a JVaadinPanel. This way the user can run the same code without having a version for regular browsers and another version for JVaadinPanel. 
 
@@ -115,14 +123,6 @@ public interface IPerson extends Serializable {
     String getJob();
 
     LocalDate getBirthDate();
-}
-```
-
-**IPersonView:** The IPersonView interface represents a visual element that visualize the detailed information of a person.
-
-```java
-public interface IPersonView {
-    void show(Long id);
 }
 ```
 
@@ -229,26 +229,37 @@ So far this is just a regular Vaadin view with a grid than can already be displa
 ![Vaadin Grid view on a browser](https://user-images.githubusercontent.com/106953874/197409035-b8fc0f08-5769-4129-ba03-a3244a66488b.png)
 
 
-We continue adding the communication capability and using the Swing Kit API SwingVaadinServer.isSwingRendered() method to keep the code runnable on a regular browser and not dependant to a JVaadinPanel. VaadinSwingEvent are fully customizable providing a String unique id (this uniqueness has to be guaranteed by the user) and a HashMap providing the parameters related to this event that could be any object that implements the Serializable interface. On this case the exchanged parameter is the id of the user selected on the Vaadin Grid. 
+We continue adding the communication capability and using the Swing Kit API SwingVaadinServer.isSwingRendered() method to keep the code runnable on a regular browser and not dependant to a JVaadinPanel. VaadinSwingEvent are fully customizable providing a String unique id (this uniqueness has to be guaranteed by the user) and a HashMap providing the parameters related to this event that could be any object that implements the Serializable interface. On this case the exchanged parameter is the id of the user selected on the Vaadin Grid. Once the event is ready we emit it using the EventEmitterFactory and the event will be delivered to the JVaadinPanel hosting the view.
 
 ```java
- if (SwingVaadinServer.isSwingRendered()) {
-            grid.addSelectionListener(selection -> {
-                if (selection.getFirstSelectedItem().isPresent()) {
-                    Long id = PersonsData.getData().inverse().get(selection.getFirstSelectedItem().get());
-                    System.out.println("ID "+id+" "+selection.getFirstSelectedItem());
-                    if (id != null) {
-                        HashMap<String, Serializable> params = new HashMap<>();
-                        params.put(PERSON_PARAMETER, id);
-                        VaadinSwingEvent showEvent = new VaadinSwingEvent(PERSON_SHOW_EVENT, params);
-                        EventEmitterFactory.newEventEmitter().emit(showEvent);
-                    }
-                }
-            });
-        }
+// When this view is rendered in a Swing Application using Swing kit we are on a
+// intermediate step of the migration and we need to communicata the events
+// produced by the Grid item selection to the Swing side.
+if (SwingVaadinServer.isSwingRendered()) {
+	grid.addSelectionListener(selection -> {
+		if (selection.getFirstSelectedItem().isPresent()) {
+			Long id = PersonsData.getData().inverse().get(selection.getFirstSelectedItem().get());
+			System.out.println("ID " + id + " " + selection.getFirstSelectedItem());
+			if (id != null) {
+				// Creation of the VaadinSwingEvent. We create the parameters to include on the
+				// event, the Person identifier on this case.
+				HashMap<String, Serializable> params = new HashMap<>();
+				params.put(PERSON_PARAMETER, id);
+				// We define the event giving to it a unique Strin identifier so the event can
+				// be filtered conveniently on the JVaadinPanel of the Swing Side. On this demo
+				// there is only one event so this filtering is not required but it is done on
+				// the Swing Side as a proof of concept
+				VaadinSwingEvent showEvent = new VaadinSwingEvent(PERSON_SHOW_EVENT, params);
+				// When the event is ready we use the EventEmitterFactory to emit the event that
+				// will be delivered to the JVaadinPanel containing the view.
+				EventEmitterFactory.newEventEmitter().emit(showEvent);
+			}
+		}
+	});
+}
 ```
 
-To finalize this migration now we need to create the JVaadinPanel that will show the Vaadin view and then prepare the component to handle this event on the Swing side. On this application we are only using one type of event but Swing Kit provides de VaadinSwingEvent::getType() method to let the user to check what event is receiving since all the events created on the Vaadin view are delivered at the level of the JVaadinPanel.
+To finalize this migration now we need to create the JVaadinPanel that will show the Vaadin view and then prepare the component to handle this event on the Swing side. On this application we are only using one type of event but Swing Kit provides the VaadinSwingEvent::getType() method to let the user to check what event is receiving since all the events created on the Vaadin view are delivered at the level of the JVaadinPanel.
 
 ```java 
         JVaadinPanel tableView = null;
