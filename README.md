@@ -26,14 +26,11 @@ On a second terminal, run Swing application:
 ```
 cd swing-app/target
 
-# Windows
+# Windows and MacOs
 - Original Swing App: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
 - Table migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinTable
 - Detailed info form migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinDetails
 - Full app migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFullVaadin
-
-# For MacOs
-java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
 
 # For MacOS and Java >= 17 add these parameters to the command (if you get exception related to sun.awt package)
 java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
@@ -51,20 +48,16 @@ This will include a 3 multimodule project.
 
 ### Goal: Automating the Swing-to-Vaadin journey
 
-The purpose of the Swing Kit is to reduce risks and time required in a big-bang migration from Swing to Vaadin, giving the option of a phased process.
+The purpose of the Swing Kit is to reduce risks and time required in a big-bang migration from Swing to Vaadin, giving the option of a phased process. In this guide we will show the process of migrating one view at the time, and render them inside your Swing Application.
 
-Migrate one view at the time, and render them inside your Swing Application.
-
-Swing Kit contains an embedded browser with additional Vaadin-integration features.
-Render Vaadin views inside Swing Panels.
-Events and Calls can be shared between the different view technologies.
+Swing Kit contains an embedded browser with additional Vaadin-integration features. It allows to render Vaadin views inside Swing Panels and helps to manage Events and Calls that can be shared between the different view technologies.
 
 #### Basic Concepts
 
 - **JVaadinPanel:** The extension of a Swing JPanel to be used in Swing applications that contains an embedded browser where Vaadin views will be displayed.  
 - **SwingVaadinCallable:** The interface that makes a Vaadin view callable from the JVaadinPanel, that is from the Swing side.
 - **VaadinSwingEvent:** The Event class that allows the user to send asynchronous events from the Vaadin view to the Swing side. 
-- **Phased Migration:** The Swing Kit migrations approach let the user to migrate a Swing application view by view. 
+- **Phased Migration:** The Swing Kit migrations approach lets the user to migrate a Swing application view by view. 
 
 **Initial State**
 
@@ -262,7 +255,7 @@ We continue adding the communication capability and using the Swing Kit API Swin
         }
 ```
 
-To finalize this migration now we need to create the JVaadinPanel that will show the Vaadin view and then prepare the component to handle this event on the Swing side. On this application we are only using one type of event but Swing Kit provides de VaadinSwingEvent::getType() method to let the user to check what event is receiving since all the events created on the Vaadin view are delivered at the level of the JVaadinPanel.
+To finalize this migration now we need to create the JVaadinPanel that will show the Vaadin view and then prepare the component to handle this event on the Swing side. On this application we are only using one type of event but Swing Kit provides the VaadinSwingEvent::getType() method to let the user to check what event is receiving since all the events created on the Vaadin view are delivered at the level of the JVaadinPanel.
 
 ```java 
         JVaadinPanel tableView = null;
