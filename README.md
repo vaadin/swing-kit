@@ -1,5 +1,7 @@
 # Swing Kit Example
 
+This demo contains a full example of a phased migration of a simple Swing App to Vaadin 23 using the Swing Kit as a migration helper. 
+
 First compile the modules with
 ```
 mvn clean install
@@ -7,23 +9,35 @@ mvn clean install
 
 ## Run the project
 
-This project includes two applications.
+This project includes two applications. A valid **Vaadin PRO license is required** to run this Swing Kit demo.
 
 On one terminal, run Vaadin application:
 ```
 cd flow-server
 mvn
 ```
-You can check the person page at `http://localhost:8080/person`
+You can check the different pieces of this demo.
+
+- Table View migration page at `http://localhost:8080/person-table-view`
+- Detailed Info migration page at `http://localhost:8080/person`
+- Final migration page at `http://localhost:8080/`
 
 On a second terminal, run Swing application:
 ```
 cd swing-app/target
 
 # Windows
-java -jar swing-app-1.0-SNAPSHOT.jar
+- Original Swing App: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
+- Table migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinTable
+- Detailed info form migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrameVaadinDetails
+- Full app migrated to Vaadin: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFullVaadin
+
 # For MacOs
-java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -jar swing-app-1.0-SNAPSHOT.jar
+java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
+
+# For MacOS and Java >= 17 add these parameters to the command (if you get exception related to sun.awt package)
+java --add-opens java.desktop/sun.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
+
 ```
 ## Development
 
