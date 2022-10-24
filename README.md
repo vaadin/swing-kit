@@ -228,23 +228,34 @@ So far this is just a regular Vaadin view with a grid than can already be displa
 ![Vaadin Grid view on a browser](https://user-images.githubusercontent.com/106953874/197409035-b8fc0f08-5769-4129-ba03-a3244a66488b.png)
 
 
-We continue adding the communication capability and using the Swing Kit API SwingVaadinServer.isSwingRendered() method to keep the code runnable on a regular browser and not dependant to a JVaadinPanel. VaadinSwingEvent are fully customizable providing a String unique id (this uniqueness has to be guaranteed by the user) and a HashMap providing the parameters related to this event that could be any object that implements the Serializable interface. On this case the exchanged parameter is the id of the user selected on the Vaadin Grid. 
+We continue adding the communication capability and using the Swing Kit API SwingVaadinServer.isSwingRendered() method to keep the code runnable on a regular browser and not dependant to a JVaadinPanel. VaadinSwingEvent are fully customizable providing a String unique id (this uniqueness has to be guaranteed by the user) and a HashMap providing the parameters related to this event that could be any object that implements the Serializable interface. On this case the exchanged parameter is the id of the user selected on the Vaadin Grid. Once the event is ready we emit it using the EventEmitterFactory and the event will be delivered to the JVaadinPanel hosting the view.
 
 ```java
- if (SwingVaadinServer.isSwingRendered()) {
-            grid.addSelectionListener(selection -> {
-                if (selection.getFirstSelectedItem().isPresent()) {
-                    Long id = PersonsData.getData().inverse().get(selection.getFirstSelectedItem().get());
-                    System.out.println("ID "+id+" "+selection.getFirstSelectedItem());
-                    if (id != null) {
-                        HashMap<String, Serializable> params = new HashMap<>();
-                        params.put(PERSON_PARAMETER, id);
-                        VaadinSwingEvent showEvent = new VaadinSwingEvent(PERSON_SHOW_EVENT, params);
-                        EventEmitterFactory.newEventEmitter().emit(showEvent);
-                    }
-                }
-            });
-        }
+// When this view is rendered in a Swing Application using Swing kit we are on a
+// intermediate step of the migration and we need to communicata the events
+// produced by the Grid item selection to the Swing side.
+if (SwingVaadinServer.isSwingRendered()) {
+	grid.addSelectionListener(selection -> {
+		if (selection.getFirstSelectedItem().isPresent()) {
+			Long id = PersonsData.getData().inverse().get(selection.getFirstSelectedItem().get());
+			System.out.println("ID " + id + " " + selection.getFirstSelectedItem());
+			if (id != null) {
+				// Creation of the VaadinSwingEvent. We create the parameters to include on the
+				// event, the Person identifier on this case.
+				HashMap<String, Serializable> params = new HashMap<>();
+				params.put(PERSON_PARAMETER, id);
+				// We define the event giving to it a unique Strin identifier so the event can
+				// be filtered conveniently on the JVaadinPanel of the Swing Side. On this demo
+				// there is only one event so this filtering is not required but it is done on
+				// the Swing Side as a proof of concept
+				VaadinSwingEvent showEvent = new VaadinSwingEvent(PERSON_SHOW_EVENT, params);
+				// When the event is ready we use the EventEmitterFactory to emit the event that
+				// will be delivered to the JVaadinPanel containing the view.
+				EventEmitterFactory.newEventEmitter().emit(showEvent);
+			}
+		}
+	});
+}
 ```
 
 To finalize this migration now we need to create the JVaadinPanel that will show the Vaadin view and then prepare the component to handle this event on the Swing side. On this application we are only using one type of event but Swing Kit provides the VaadinSwingEvent::getType() method to let the user to check what event is receiving since all the events created on the Vaadin view are delivered at the level of the JVaadinPanel.
