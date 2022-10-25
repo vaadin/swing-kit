@@ -9,7 +9,7 @@ mvn clean install
 
 ## Run the project
 
-This project includes two applications. A valid **Vaadin PRO license is required** to run this Swing Kit demo.
+This project includes two applications. A **trial license is required** to run this Swing Kit demo, you can request it at https://pages.vaadin.com/acceleration-kit-trials .
 
 On one terminal, run Vaadin application:
 ```
@@ -90,8 +90,6 @@ SwingVaadinServer.isSwingRendered()
 
 Swing Kit provides an API to the user to communicate between Swing side and Vaadin Side and viceversa. Entities that will be shared between sides have to be accesible from both modules the Vaadin module and the Swing module. So it is strongly recommended that these entities are defined on third separated module. 
 
-In Swing Kit API you will find classes with SwingVaadin and VaadinSwing prefixes. This naming helps to understand the direction of the communication that the class provides, Swing to Vaadin or Vaadin to Swing.
-
 #### The data and calls
 
 In this demo the Data module is provided with the definition of data entities and interfaces for calling Vaadin from Swing side.
@@ -147,7 +145,7 @@ public interface IPerson extends Serializable {
 
 For this demo we have a Swing application with a main JFrame containing two panels. The top panel contains a table with a list of people and the bottom panel contains a form where after clicking on any item of the table, detailed information of the person is displayed. 
 
-![Swing Application](https://user-images.githubusercontent.com/106953874/197408830-c72a3b96-58e5-4d24-9186-dec0cf71ff0c.png)
+![Swing Application](https://user-images.githubusercontent.com/106953874/197759476-287657da-eea8-440a-bf3e-0dda75b27ea3.png)
 
 **The table**
 
@@ -310,7 +308,7 @@ To finalize this migration now we need to create the JVaadinPanel that will show
 	}
 ```
 
-![Table migrated](https://user-images.githubusercontent.com/106953874/197409071-2ef487f5-d23a-4df9-aa8a-51e1c044b87c.png)
+![Table migrated](https://user-images.githubusercontent.com/106953874/197759601-ff3669eb-5393-4c31-b6ea-c5cb0cca7457.png)
 
 ##### Step 1b: Migrate first the detailed info panel
 
@@ -387,8 +385,7 @@ To finalize this migration now we need to create the JVaadinPanel that will call
         });
 ```
 
-![Detailed Info Form migrated](https://user-images.githubusercontent.com/106953874/197409849-550eafef-66c5-43b7-a0e8-38ac5d9b8c45.png)
-
+![Detailed Info Form migrated](https://user-images.githubusercontent.com/106953874/197759674-e9ebb13f-4145-4aa9-b70b-aeaadd318e36.png)
 
 #### Step 2: Combine views
 
@@ -441,8 +438,7 @@ try {
 
 ```
 
-![Application Migrated Swing UI](https://user-images.githubusercontent.com/106953874/197489201-91e41313-4744-446c-b4d9-f6b38bae102f.png)
-
+![Application Migrated Swing UI](https://user-images.githubusercontent.com/106953874/197759785-5f3d0c5d-8146-4e73-bfaa-e44832ee72a9.png)
 
 #### Step 3: Goodbye Swing
 
