@@ -99,14 +99,31 @@ In this demo the Data module is provided with the definition of data entities an
 **IPersonProvider:** This Interface callable from Swing side and implemented on the Vaadin side will show some information of a user identified by an ID.
 
 ```java 
+/**
+ * SwingVaadinCallable interface that has to be implemented by any Vaadin View
+ * that want to be callable from the Swing side.
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public interface IPersonProvider extends SwingVaadinCallable {
-    void show(Long id);
-}
+	/**
+	 * Consumer of the event produced when a Person is selected on the table/grid view. 
+	 * 
+	 * @param id unique Identifier of the user.
+	 */
+	void show(Long id);
 ```
 
 **IPerson:** The IPerson interface that represents a Person Entity.
 
 ```java
+/**
+ * The Entity Person used in this demo with its personal information
+ * 
+ * @author Vaadin Ltd.
+ *
+ */
 public interface IPerson extends Serializable {
     void setFirstName(String firstName);
 
@@ -163,7 +180,11 @@ selectModel = jt.getSelectionModel();
 The form displays the detailed information of a IPerson
 
 ```java
-   @Override
+     /**
+     * Shows the information of the selected person on the form. 
+     * 
+     * @param id Unique identifier of the Person
+     */
     public void show(Long id) {
         IPerson person = PersonsData.getData().get(id);
         txtFirstName.setText(person.getFirstName());
@@ -263,21 +284,30 @@ To finalize this migration now we need to create the JVaadinPanel that will show
 
 ```java 
         JVaadinPanel tableView = null;
-        try {
-            tableView = SwingVaadinClient.getBuilder().build("http://localhost:8080/person-table-view");
-            tableView.setPreferredSize(new Dimension(400, 45));
-            tableView.addEventListener(PERSON_SHOW_EVENT, new VaadinEventListener() {
-                @Override
-                public void handleEvent(VaadinSwingEvent vaadinSwingEvent) {
-                    if (vaadinSwingEvent.getType().equals(PERSON_SHOW_EVENT)) {
-                        Long selectedId = (Long) vaadinSwingEvent.getParams().get(PERSON_PARAMETER);
-                        personDetailView.show(selectedId);
-                    }
-                }
-            });
-        } catch (SwingVaadinException e) {
-            throw new RuntimeException(e);
-        }
+	try {
+		// We create the JVaadinPanel that will contain the table listing the Person
+		// entities using the builder and pointing the view to the Vaadin implementation
+		// of the table.
+		tableView = SwingVaadinClient.getBuilder().build("http://localhost:8080/person-table-view");
+		tableView.setPreferredSize(new Dimension(400, 45));
+		// To allow the Swing side to receive the Vaadin side event produced when a user
+		// selects a Person on the table we add a Swing Kit VaadinEventListener. This
+		// listener receives a VaadinSwingEvent event.
+		tableView.addEventListener(PERSON_SHOW_EVENT, new VaadinEventListener() {
+			@Override
+			public void handleEvent(VaadinSwingEvent vaadinSwingEvent) {
+				// On this demo we only have one type of event but we add this code as a proof
+				// of concept that the user can filter the events to know how to handle them.
+				if (vaadinSwingEvent.getType().equals(PERSON_SHOW_EVENT)) {
+					Long selectedId = (Long) vaadinSwingEvent.getParams().get(PERSON_PARAMETER);
+					// We call the consumer. On this case is a Swing method. 
+					personDetailView.show(selectedId);
+				}
+			}
+		});
+	} catch (SwingVaadinException e) {
+		throw new RuntimeException(e);
+	}
 ```
 
 ![Table migrated](https://user-images.githubusercontent.com/106953874/197409071-2ef487f5-d23a-4df9-aa8a-51e1c044b87c.png)
@@ -331,15 +361,25 @@ To finalize this migration now we need to create the JVaadinPanel that will call
 
 ```java 
         JVaadinPanel personDetails = null;
-        try {
-            personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
-            personDetailsProvider = personDetails.as(IPersonProvider.class);
-        } catch (SwingVaadinException e) {
-            throw new RuntimeException(e);
-        }
+	try {
+		// We create the JVaadinPanel that will contain the detailed information form
+		// using the builder and pointing the view to the Vaadin implementation of the
+		// form.
+		personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
+		// To allow the Swing side to call the Vaadin side using a SwingVaadinCallable
+		// interface we cast the JVaadinPanel as a IPersonProvider implementation that
+		// will be called when a item is selected on the JTable.
+		personDetailsProvider = personDetails.as(IPersonProvider.class);
+	} catch (SwingVaadinException e) {
+		throw new RuntimeException(e);
+	}
 ```
 ```java 
-        tableView.addListSelectionListener(new ListSelectionListener() {
+        /**
+	 * JTable listener that will deliver the Swing event to the Vaadin view consumer
+	 * (an IPersonProvider implementation)
+	 */
+	tableView.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 Long selectedId = (long) ((ListSelectionModel)e.getSource()).getSelectedIndices()[0] + 1;
                 personDetailsProvider.show(selectedId);
@@ -356,32 +396,48 @@ No matter what view we have migrated first now we have to combine both solutions
 
 ```java
  JVaadinPanel tableView = null;
-        try {
-            tableView = SwingVaadinClient.getBuilder().build("http://localhost:8080/person-table-view");
-            tableView.setPreferredSize(new Dimension(400, 50));
-            tableView.addEventListener(PERSON_SHOW_EVENT, new VaadinEventListener() {
-                @Override
-                public void handleEvent(VaadinSwingEvent vaadinSwingEvent) {
-					if (vaadinSwingEvent.getType().equals(PERSON_SHOW_EVENT)) {
-						Long selectedId = (Long) vaadinSwingEvent.getParams().get(PERSON_PARAMETER);
-						personDetailsProvider.show(selectedId);
-					}
-                }
-            });
-        } catch (SwingVaadinException e) {
-            throw new RuntimeException(e);
-        }
+try {
+	// We create the JVaadinPanel that will contain the table listing the Person
+	// entities using the builder and pointing the view to the Vaadin implementation
+	// of the table.
+	tableView = SwingVaadinClient.getBuilder().build("http://localhost:8080/person-table-view");
+	tableView.setPreferredSize(new Dimension(400, 50));
+	// To allow the Swing side to receive the Vaadin side event produced when a user
+	// selects a Person on the table we add a Swing Kit VaadinEventListener. This
+	// listener receives a VaadinSwingEvent event.
+	tableView.addEventListener(PERSON_SHOW_EVENT, new VaadinEventListener() {
+		@Override
+		public void handleEvent(VaadinSwingEvent vaadinSwingEvent) {
+			// On this demo we only have one type of event but we add this code as a proof
+			// of concept that the user can filter the events to know how to handle them.
+			if (vaadinSwingEvent.getType().equals(PERSON_SHOW_EVENT)) {
+				Long selectedId = (Long) vaadinSwingEvent.getParams().get(PERSON_PARAMETER);
+				// We call the consumer. On this case is a SwingVaadinCallable implementation
+				// that is the Vaadin Person view.
+				personDetailsProvider.show(selectedId);
+			}
+		}
+	});
+} catch (SwingVaadinException e) {
+	throw new RuntimeException(e);
+}
 
         ...
         ...
 
-        JVaadinPanel personDetails = null;
-        try {
-            personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
-            personDetailsProvider = personDetails.as(IPersonProvider.class);
-        } catch (SwingVaadinException e) {
-            throw new RuntimeException(e);
-        }
+JVaadinPanel personDetails = null;
+try {
+	// We create the JVaadinPanel that will contain the detailed information form
+	// using the builder and pointing the view to the Vaadin implementation of the
+	// form.
+	personDetails = SwingVaadinClient.getBuilder().build("http://localhost:8080/person");
+	// To allow the Swing side to call the Vaadin side using a SwingVaadinCallable
+	// interface we cast the JVaadinPanel as a IPersonProvider implementation that
+	// will be called when a item is selected on the JTable.
+	personDetailsProvider = personDetails.as(IPersonProvider.class);
+} catch (SwingVaadinException e) {
+	throw new RuntimeException(e);
+}
 
 ```
 
@@ -390,22 +446,24 @@ No matter what view we have migrated first now we have to combine both solutions
 
 #### Step 3: Goodbye Swing
 
-At this point we have migrated all the views of our Swing application. Now we will just need to create a Vaadin View that host both subviews and with the flexibility of Vaadin this a quick easy action. Again the only change to implement is to change the communication between Vaadin views now to a native Vaadin listener as there is no Swing components involved. 
+At this point we have migrated all the views of our Swing application. Now we will just need to create a Vaadin View that hosts both subviews and with the flexibility of Vaadin this is a quick and easy implementation. Again the only change to implement is to change the communication between JVaadinPanel views now to a native Vaadin listener as there is no Swing components involved. 
 
 **Main View:**
 
 ```java 
 public class PersonFullView extends VerticalLayout {
-    public PersonFullView() {
-        setAlignItems(Alignment.CENTER);
-        H2 title = new H2("Person Example Application");
-        add(title);
-        PersonsTableView table = new PersonsTableView();
-        add(table);
-        PersonView person = new PersonView();
-        add(person);
-        table.attachToDetails(person);
-    }
+	public PersonFullView() {
+		setAlignItems(Alignment.CENTER);
+		H2 title = new H2("Person Example Application");
+		add(title);
+		PersonsTableView table = new PersonsTableView();
+		add(table);
+		PersonView person = new PersonView();
+		add(person);
+		// SInce there is no more Swing code on the application we link the views using
+		// regular Vaadin event/listener methods.
+		table.attachToDetails(person);
+	}
 }
 
 ```
@@ -413,6 +471,13 @@ public class PersonFullView extends VerticalLayout {
 **Table view:**
 
 ```java 
+/**
+ * This method is only used on the final version of the migration when we remove
+ * definitely the Swing code and the interaction between Grid and Form views is
+ * completely managed by Vaadin
+ * 
+ * @param view The detailed info panel
+ */
  public void attachToDetails(PersonView view) {
         grid.addSelectionListener(selection -> {
             if (selection.getFirstSelectedItem().isPresent()) {
