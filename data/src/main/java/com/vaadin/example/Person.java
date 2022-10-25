@@ -12,15 +12,6 @@ import java.util.Calendar;
  */
 public class Person implements IPerson, Serializable {
 
-    public static Person createDefault() {
-        Person p = new Person();
-        p.setFirstName("Napoleon");
-        p.setLastName("Bonaparte");
-        p.setJob("Emperor of the French");
-        p.setBirthDate(LocalDate.of(1789, Calendar.AUGUST, 15));
-        return p;
-    }
-
     private String firstName, lastName, job;
     private LocalDate birthDate;
 

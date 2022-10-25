@@ -22,13 +22,13 @@ import com.vaadin.flow.router.Route;
 public class PersonFullView extends VerticalLayout {
 	public PersonFullView() {
 		setAlignItems(Alignment.CENTER);
-		H2 title = new H2("Person Example Application");
+		H2 title = new H2("Swing Kit Demo");
 		add(title);
 		PersonsTableView table = new PersonsTableView();
 		add(table);
 		PersonView person = new PersonView();
 		add(person);
-		// SInce there is no more Swing code on the application we link the views using
+		// Since there is no more Swing code on the application we link the views using
 		// regular Vaadin event/listener methods.
 		table.attachToDetails(person);
 	}

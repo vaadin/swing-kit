@@ -51,7 +51,7 @@ public class PersonListFrameVaadinDetails extends JFrame {
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 		mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		JLabel title = new JLabel("Person List Application");
+		JLabel title = new JLabel("Swing Kit Demo");
 		title.setAlignmentX(Component.CENTER_ALIGNMENT);
 		title.setFont(new Font("Arial", Font.PLAIN, 16));
 		mainPanel.add(title);

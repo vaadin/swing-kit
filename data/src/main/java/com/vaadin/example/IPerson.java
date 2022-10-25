@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * The Entity Person used in this demo with its personal information
+ * The Person used in this demo with its personal information
  * 
  * @author Vaadin Ltd.
  *

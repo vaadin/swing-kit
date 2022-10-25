@@ -34,20 +34,6 @@ public class PersonListFrameVaadinTable extends JFrame {
 
 	public PersonListFrameVaadinTable() {
 		setupFrame();
-		attachListeners();
-	}
-
-	/**
-	 * Since the select item event will be produced on the Vaadin side this method
-	 * is no longer required.
-	 */
-	private void attachListeners() {
-		/*
-		 * tableView.addListSelectionListener(new ListSelectionListener() { public void
-		 * valueChanged(ListSelectionEvent e) { Long selectedId = (long)
-		 * ((ListSelectionModel)e.getSource()).getSelectedIndices()[0] + 1;
-		 * personDetailView.show(selectedId); } });
-		 */
 	}
 
 	private void setupFrame() {
@@ -56,7 +42,7 @@ public class PersonListFrameVaadinTable extends JFrame {
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 		mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		JLabel title = new JLabel("Person List Application");
+		JLabel title = new JLabel("Swing Kit Demo");
 		title.setAlignmentX(Component.CENTER_ALIGNMENT);
 		title.setFont(new Font("Arial", Font.PLAIN, 16));
 		mainPanel.add(title);
