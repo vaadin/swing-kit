@@ -9,7 +9,7 @@ mvn clean install
 
 ## Run the project
 
-This project includes two applications. A valid **Vaadin PRO license is required** to run this Swing Kit demo.
+This project includes two applications. A **trial license is required** to run this Swing Kit demo, you can request it at https://pages.vaadin.com/acceleration-kit-trials .
 
 On one terminal, run Vaadin application:
 ```
@@ -89,8 +89,6 @@ SwingVaadinServer.isSwingRendered()
 ```
 
 Swing Kit provides an API to the user to communicate between Swing side and Vaadin Side and viceversa. Entities that will be shared between sides have to be accesible from both modules the Vaadin module and the Swing module. So it is strongly recommended that these entities are defined on third separated module. 
-
-In Swing Kit API you will find classes with SwingVaadin and VaadinSwing prefixes. This naming helps to understand the direction of the communication that the class provides, Swing to Vaadin or Vaadin to Swing.
 
 #### The data and calls
 
