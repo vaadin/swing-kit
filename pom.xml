@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.vaadin</groupId>
+    <artifactId>swing-kit-example</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Vaadin Kit Example</name>
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>        
+        <java.version>11</java.version>
+        <vaadin.version>23.2.2</vaadin.version>
+        <selenium.version>4.4.0</selenium.version>
+        <springframework.boot.version>2.7.2</springframework.boot.version>
+        <springframework.version>5.3.22</springframework.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <swing-kit.version>1.0.0</swing-kit.version>
+    </properties>
+    <modules>
+        <module>flow-server</module>
+        <module>swing-app</module>
+        <module>data</module>
+    </modules>
+</project>
