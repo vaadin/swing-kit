@@ -24,7 +24,7 @@ You can check the different pieces of this demo.
 
 On a second terminal, run Swing application:
 ```
-cd swing-app/target
+cd swing-app
 
 # Windows and MacOs
 - Original Swing App: java -cp ./target/swing-app-1.0-SNAPSHOT.jar com.vaadin.example.PersonListFrame
